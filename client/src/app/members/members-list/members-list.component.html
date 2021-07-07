@@ -1,5 +1,62 @@
-<div class = "row">
-  <div *ngFor="let member of members$ | async" class= "col-2">
+<div class = "text-center mt-3">
+  <h2>Your Matches - {{paginationVal?.totalItems}} found</h2>
+</div>
+
+<div class="container">
+  <form #form="ngForm" class="form-inline" style="margin-bottom: 10px;" (ngSubmit) = "loadMembers()" autocomplete="off">
+      <label style="margin-left: 10px"> Age from: </label>
+      <input type = "number" class = "form-group" style="width: 70px; margin-left: 10px;" name="minAge"
+          [(ngModel)] = "userParams.minAge">
+      <label style="margin-left: 10px"> Age to: </label>
+      <input type = "number" class = "form-group" style="width: 70px; margin-left: 10px;" name="maxAge"
+          [(ngModel)] = "userParams.maxAge">
+      <label style="margin-left: 10px"> Show: </label>
+      <select type = "gender" class = "form-group" style="width: 130px; margin-left: 10px;" [ngModelOptions]="{standalone: true}" [(ngModel)]="userParams.gender">
+        <option *ngFor="let gender of genderList" [value]="gender.value"> {{gender.display}}</option>
+      </select>
+
+      <button class="btn btn-primary" style="margin-left: 10px" type="submit">Apply Filters</button>
+      <button (click)="resetFilters()" style="margin-left: 10px" class="btn btn-info" type="submit">Reset Filters</button>
+
+      <div class="btn-group float-right">
+        <button
+                type="button"
+                class="btn btn-primary"
+                name="orderBy"
+                (click) = "loadMembers()"
+                btnRadio = "lastActive"
+                style="margin-left: 10px"
+                [(ngModel)]="userParams.orderBy">Last Active</button>
+
+
+        <button
+                type="button"
+                class="btn btn-primary"
+                name="orderBy"
+                (click) = "loadMembers()"
+                btnRadio = "created"
+                [(ngModel)]="userParams.orderBy">Newest Members</button>
+      </div>
+  </form>
+</div>
+<div class = "row"   >
+  <div *ngFor="let member of members" class= "col-2">
     <app-member-cards [member] = "member"></app-member-cards>
   </div>
+
+
+<div class="d-flex justify-content-center" *ngIf = "paginationVal">
+
+  <pagination
+    [boundaryLinks]="true"
+    [totalItems]="10"
+    [itemsPerPage]="userParams.pageSize"
+    [(ngModel)] = "userParams.pageNumber"
+    (pageChanged) = "pageChanged($event)"
+    previousText="&lsaquo;"
+    nextText="&rsaquo;"
+    firstText="&laquo;"
+    lastText="&raquo;"
+  ></pagination>
+</div>
 </div>

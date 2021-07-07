@@ -8,12 +8,10 @@ using Microsoft.AspNetCore.Authorization;
 using API.Interfaces;
 using API.DTOs;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using API.Extensions;
 using System.Linq;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -30,8 +28,9 @@ namespace API.Controllers
             _photoService = photoService;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers(){
-            var users = await _userRepository.GetMembersAsync();
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams){
+            var users = await _userRepository.GetMembersAsync(userParams);
+            Response.AddPaginationHeader(users.CurrentPage , users.PageSize, users.TotalCount, users.TotalPages);
             return Ok(users);
         }
 
